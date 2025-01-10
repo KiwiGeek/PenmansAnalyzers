@@ -33,13 +33,11 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 9.0.100
+        dotnet-version: 9.x
     - name: Build Project
       run: dotnet build PenmansAnalyzers.csproj -c Release
-    - name: Build and Pack NuGet package
-      run: dotnet pack PenmansAnalyzers.csproj -p:Version='${{ steps.gitversion.outputs.SemVer }}' -c Release --output ./nugetPackage --property:RepositoryUrl=https://github.com/kiwigeek/PenmansAnalyzers
-    - name: Verify Packed Output
-      run: ls ./nugetPackage
+    - name: Pack NuGet package
+      run: dotnet pack PenmansAnalyzers.csproj -p:Version='${{ steps.gitversion.outputs.SemVer }}' -c Release --output ./nugetPackage
     - name: Upload NuGet package to GitHub
       uses: actions/upload-artifact@v4
       with:
@@ -53,20 +51,12 @@ jobs:
     
     steps:  
     #Push NuGet package to GitHub packages
-    - name: Download nuget package artifact
+    - name: Download NuGet package artifact
       uses: actions/download-artifact@v4
       with:
         name: nugetPackage
-    - name: Print Working Directory
-      run: pwd
-    - name: List All Files
-      run: find . -type f
-    - name: List Directory Tree
-      run: ls -R  
     - name: Prep packages
       run: dotnet nuget add source --username KiwiGeek --password ${{ secrets.NUGET_PACKAGE_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/kiwigeek/index.json" 
-    - name: Debug Package Path
-      run: find . -name '*.nupkg'
     - name: Push package to GitHub packages 
       if: needs.build.outputs.CommitsSinceVersionSource > 0 #Only release if there has been a commit/version change  
       run: dotnet nuget push $(find . -name '*.nupkg') --api-key ${{ secrets.NUGET_PACKAGE_TOKEN }}  --source "https://nuget.pkg.github.com/kiwigeek/index.json"
