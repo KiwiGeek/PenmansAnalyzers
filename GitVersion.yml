@@ -1,0 +1,14 @@
+﻿next-version: 1.0.0 # Default starting version if no tags exist
+tag-prefix: v       # Match tags like v1.2
+mode: ContinuousDeployment # Increment patch versions based on commits since the last tag
+branches:
+  master:
+    increment: Patch
+    tag: ''
+    prevent-increment-of-merged-branch-version: true
+    is-release-branch: true
+  dev:
+    increment: Patch
+    tag: ''
+    prevent-increment-of-merged-branch-version: false
+    is-release-branch: false
