@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - master   # Trigger on pushes to master
-    tags:
-      - 'v*.*.*' # Trigger on semantic version tags like v1.2.0
 
 jobs:
   build:
