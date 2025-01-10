@@ -14,3 +14,7 @@ branches:
     tag: ''
     prevent-increment-of-merged-branch-version: false
     is-release-branch: false
+    source-branches:
+      - master
+      - feature/*
+      - hotfix/*
