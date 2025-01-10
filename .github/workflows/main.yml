@@ -1,0 +1,54 @@
+name: Publish NuGet Package
+
+on:
+  push:
+    branches:
+      - master   # Trigger on pushes to master
+    tags:
+      - 'v*.*.*' # Trigger on semantic version tags like v1.2.0
+
+jobs:
+  build:
+    runs-on: ubuntu-latest    
+
+    steps:  
+    - name: Checkout Code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0 # Ensure full history for GitVersion
+
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.9.7
+      with:
+        versionSpec: '5.x'
+
+    - name: Calculate Version with GitVersion
+      id: gitversion
+      uses: gittools/actions/gitversion/execute@v0.9.7
+
+    - name: Display GitVersion Outputs
+      run: |
+        echo "Version: ${{ steps.gitversion.outputs.SemVer }}"
+        echo "CommitsSinceVersionSource: ${{ steps.gitversion.outputs.CommitsSinceVersionSource }}"
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 9.x
+
+    - name: Build Project
+      run: dotnet build PenmansAnalyzers.csproj -c Release
+
+    - name: Pack NuGet Package
+      run: dotnet pack PenmansAnalyzers.csproj -c Release --output ./nugetPackage --property:Version=${{ steps.gitversion.outputs.SemVer }}
+
+    - name: Push NuGet Package to GitHub Packages
+      run: dotnet nuget push ./nugetPackage/*.nupkg --api-key ${{ secrets.NUGET_PACKAGE_TOKEN }} --source "https://nuget.pkg.github.com/kiwigeek/index.json"
+
+    - name: Create GitHub Release
+      uses: ncipollo/release-action@v1
+      with:
+        tag: ${{ steps.gitversion.outputs.SemVer }}
+        name: Release ${{ steps.gitversion.outputs.SemVer }}
+        artifacts: "./nugetPackage/*"
+        token: ${{ secrets.GITHUB_TOKEN }}

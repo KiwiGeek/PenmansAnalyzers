@@ -13,12 +13,25 @@
 		<LangVersion>latest</LangVersion>
 		<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
 		<Rootnamespace>PenmansAnalyzers</Rootnamespace>
+		<RepositoryUrl>https://github.com/kiwigeek/PenmansAnalyzers</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
 		<Platforms>AnyCPU;x64;x86</Platforms>
+		<Title>Penman's Analyzers</Title>
+		<Description>Helper functions for WebClient to ensure that RadWindow's are used in an owned fashion, and to avoid messagebox.show, and the visualbasic namespace</Description>
+		<PackageProjectUrl>https://github.com/KiwiGeek/PenmansAnalyzers</PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.12.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
 	</ItemGroup>
 
 </Project>
